@@ -42,6 +42,9 @@
 
     (define title "Window")
 
+    (define yBoundry 0)
+    (define xBoundry 0)
+
     (define rFrame (open-viewport title 500 500))
     (define pBrush "black")
 
@@ -54,6 +57,14 @@
 
     (define/public (clearFrame)
       (clear-viewport rFrame)
+      )
+
+    (define/public (get-x v1)
+      (posn-x v1)
+      )
+
+    (define/public (get-y v1)
+      (posn-y v1)
       )
 
     (define/public (load-preset v1)
@@ -98,13 +109,19 @@
       (display (string-append "\nClosed graphic\n "))
       )
 
+    (define/public (yBoundry! v1)
+      (set! yBoundry v1)
+      )
+
     (define/public (beginDraw v1)
       (ready-mouse-release rFrame)
-      ((draw-solid-ellipse rFrame)
-       (mouse-click-posn (get-mouse-click rFrame))
-       10
-       10
-       pBrush)
+      (cond
+        ((> (get-y (mouse-click-posn (get-mouse-click rFrame))) yBoundry)
+         ((draw-solid-ellipse rFrame)
+          (mouse-click-posn (get-mouse-click rFrame))
+          10
+          10
+          pBrush)))
       (cond
         ((equal? v1 #t) (beginDraw #t))
         )
