@@ -1,7 +1,4 @@
-#lang racket/gui
-
-;; Author: Patrick Falcon M00668092
-;; Easier method for writing simple graphical user interfaces
+#lang racket
 
 (require "engine.rkt")
 (require graphics/graphics)
@@ -11,9 +8,15 @@
  rDraw
  rBrush
  rColor
- rWrite)
+ rWrite
+ pos)
 
 (open-graphics)
+
+(define pos(λ (v1 v2)
+             (make-posn v1 v2)
+             )
+  )
 
 (define rWrite (λ (v1 v2 v3 v4 v5)
                 (send v1 text v2 v3 v4 v5)
@@ -37,8 +40,14 @@
   (class object%
     (super-new)
 
-    (define rFrame (open-viewport "Pictionary" 500 500))
+    (define title "Window")
+
+    (define rFrame (open-viewport title 500 500))
     (define pBrush "black")
+
+    (define/public (title! v1)
+      (set! title v1)
+      )
 
     (define/public (brush v1)
       (set! pBrush v1))
@@ -46,6 +55,24 @@
     (define/public (clearFrame)
       (clear-viewport rFrame)
       )
+
+    (define/public (load-preset v1)
+      (clearFrame)
+      (cond
+        ((equal? v1 "WAITING")
+         ((draw-string rFrame)
+          (pos 350 15)
+          "State: WAITING"
+          "black")
+         ) ((equal? v1 "TEST")
+            ((draw-string rFrame)
+             (pos 350 15)
+             "State: TEST_ROUND"
+             "red")
+            )
+           )
+      )
+    
 
     (define/public (bg-color v1)
       ((draw-viewport rFrame) v1))
@@ -60,6 +87,16 @@
 
     (define/public (frame-instance)
       rFrame)
+
+    (define/public (frame-instance! v1)
+      (set! rFrame v1)
+      )
+
+    (define/public (close)
+      (close-viewport rFrame)
+      (set! rFrame null)
+      (display (string-append "\nClosed graphic\n "))
+      )
 
     (define/public (beginDraw v1)
       (ready-mouse-release rFrame)
